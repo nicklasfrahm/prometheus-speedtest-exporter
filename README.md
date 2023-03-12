@@ -25,6 +25,8 @@ scrape_configs:
 
 ## Related projects
 
+Why another prometheus speedtest exporter? The container image is less than `10MB` in size! I am planning to use this exporter for Kubernetes at the network edge, hence every MB counts.
+
 - [jeanralphaviles/prometheus_speedtest (Python)](https://github.com/jeanralphaviles/prometheus_speedtest)
 - [billimek/prometheus-speedtest-exporter (Shell)](https://github.com/billimek/prometheus-speedtest-exporter)
 
