@@ -28,6 +28,9 @@ build: bin/$(TARGET)-$(SUFFIX)
 bin/$(TARGET)-$(SUFFIX): $(SOURCES)
 	@mkdir -p $(@D)
 	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build $(BUILD_FLAGS) -o $(BINARY) cmd/$(TARGET)/main.go
+ifdef UPX
+	upx -qq $(UPX) $(BINARY)
+endif
 
 # Build container image.
 .PHONY: docker
