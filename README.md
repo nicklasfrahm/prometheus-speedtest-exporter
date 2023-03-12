@@ -5,7 +5,9 @@ This is a prometheus speedtest exporter written purely in [Golang][golang]. It u
 ## Usage
 
 ```bash
-./prometheus-speedtest-exporter
+./bin/prometheus-speedtest-exporter
+inf: prometheus-speedtest-exporter: v0.1.0
+inf: starting server: http://0.0.0.0:9516
 ```
 
 ### Prometheus configuration
@@ -15,7 +17,7 @@ scrape_configs:
   - job_name: speedtest
     metrics_path: /metrics
     scrape_interval: 5m
-    scrape_timeout: 30s
+    scrape_timeout: 60s
     static_configs:
       - targets:
           - localhost:9516

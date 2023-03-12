@@ -22,6 +22,7 @@ type Metrics struct {
 	ping          prometheus.Gauge
 	jitter        prometheus.Gauge
 	resultValid   prometheus.Gauge
+	testDuration  prometheus.Gauge
 }
 
 func NewMetrics(reg prometheus.Registerer) *Metrics {
@@ -38,20 +39,26 @@ func NewMetrics(reg prometheus.Registerer) *Metrics {
 		),
 		ping: prometheus.NewGauge(
 			prometheus.GaugeOpts{
-				Name: "ping_ms",
-				Help: "Latency (ms)",
+				Name: "ping_seconds",
+				Help: "Latency (seconds)",
 			},
 		),
 		jitter: prometheus.NewGauge(
 			prometheus.GaugeOpts{
-				Name: "jitter_ms",
-				Help: "Jitter (ms)",
+				Name: "jitter_seconds",
+				Help: "Jitter (seconds)",
 			},
 		),
 		resultValid: prometheus.NewGauge(
 			prometheus.GaugeOpts{
 				Name: "result_valid",
 				Help: "Indicates if the result is logical given UL and DL speed",
+			},
+		),
+		testDuration: prometheus.NewGauge(
+			prometheus.GaugeOpts{
+				Name: "test_duration_seconds",
+				Help: "Duration of the test (seconds)",
 			},
 		),
 	}
@@ -61,6 +68,7 @@ func NewMetrics(reg prometheus.Registerer) *Metrics {
 	reg.MustRegister(m.ping)
 	reg.MustRegister(m.jitter)
 	reg.MustRegister(m.resultValid)
+	reg.MustRegister(m.testDuration)
 
 	return m
 }
@@ -113,6 +121,8 @@ func main() {
 			}
 		}
 
+		start := time.Now()
+
 		// TODO: Implement multi-server test.
 		err = target.PingTest()
 		if err != nil {
@@ -132,9 +142,11 @@ func main() {
 			return
 		}
 
+		elapsed := time.Since(start)
+
 		// TODO: Add metrics with server labels for multi-server test.
-		metrics.ping.Set(float64(target.Latency) / float64(time.Millisecond))
-		metrics.jitter.Set(float64(target.Jitter) / float64(time.Millisecond))
+		metrics.ping.Set(float64(target.Latency))
+		metrics.jitter.Set(float64(target.Jitter))
 		metrics.downloadSpeed.Set(target.DLSpeed * 1e6)
 		metrics.uploadSpeed.Set(target.ULSpeed * 1e6)
 		if target.CheckResultValid() {
@@ -142,6 +154,7 @@ func main() {
 		} else {
 			metrics.resultValid.Set(0)
 		}
+		metrics.testDuration.Set(elapsed.Seconds())
 
 		prometheusHandler.ServeHTTP(w, r)
 	})
