@@ -11,12 +11,11 @@ This is a prometheus speedtest exporter written purely in [Golang][golang]. It u
 ### Prometheus configuration
 
 ```yaml
-global:
-  scrape_timeout: 2m
-
 scrape_configs:
   - job_name: speedtest
     metrics_path: /metrics
+    scrape_interval: 5m
+    scrape_timeout: 30s
     static_configs:
       - targets:
           - localhost:9516
@@ -25,6 +24,7 @@ scrape_configs:
 ## Related projects
 
 - [jeanralphaviles/prometheus_speedtest (Python)](https://github.com/jeanralphaviles/prometheus_speedtest)
+- [billimek/prometheus-speedtest-exporter (Shell)](https://github.com/billimek/prometheus-speedtest-exporter)
 
 ## License
 
